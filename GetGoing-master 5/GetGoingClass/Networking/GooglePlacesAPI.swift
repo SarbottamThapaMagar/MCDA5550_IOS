@@ -64,7 +64,7 @@ class GooglePlacesAPI {
     }
     
     
-    class func requestPlaceDetails(_ query: String, completion: @escaping(_ status: Int, _ json: [String: Any]?)-> Void){
+    class func requestPlaceDetails(_ query: String, completion: @escaping(_ status: Int, _ json: [String: Any]?) -> Void) {
         var urlComponents = URLComponents()
         urlComponents.scheme = Constants.scheme
         urlComponents.host = Constants.host

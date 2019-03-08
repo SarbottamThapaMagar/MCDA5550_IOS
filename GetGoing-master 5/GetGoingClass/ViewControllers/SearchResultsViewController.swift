@@ -84,10 +84,10 @@ extension SearchResultsViewController: UITableViewDelegate, UITableViewDataSourc
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         print("row was selected at \(indexPath.section) \(indexPath.row)")
         
+        print(places[indexPath.row].placeid ?? "what is this")
         let placeid = places[indexPath.row].placeid
         
-//        print("place id \(placeid)")
-//        let placeid = "ChIJN1t_tDeuEmsRUsoyG83frY4"
+
         if placeid == nil {
             
             DispatchQueue.main.async {
@@ -97,17 +97,20 @@ extension SearchResultsViewController: UITableViewDelegate, UITableViewDataSourc
         }
         GooglePlacesAPI.requestPlaceDetails(placeid!) { (status, json) in
             print(json ?? "")
-           
+           print("inside Google API")
+            print(json)
             guard let jsonObj = json else { return }
-            
+            print(jsonObj)
             let result = APIParser.parsePlaceDetails(jsonObj: jsonObj)
-            if result == nil {
-                // make it run in main thread
+            if result != nil {
+                print("controller called")
+
+                 self.displayPlaceDetails(placeDetails: result!)
+            } else {
+                print("result nil")
                 DispatchQueue.main.async {
                     self.showErrorAlert(message: "No results found")
                 }
-            } else {
-                self.displayPlaceDetails(placeDetails: result!)
             }
         }
     }
@@ -115,12 +118,15 @@ extension SearchResultsViewController: UITableViewDelegate, UITableViewDataSourc
     
     
     func displayPlaceDetails(placeDetails: PlaceDetails) {
-        guard let DetailsViewController = self.storyboard?.instantiateViewController(withIdentifier: "DetailsViewController") as? DetailsViewController else { return }
         
-        DetailsViewController.placeDetails = placeDetails
+        print("DetailsViewController")
+        guard let detailsViewController = self.storyboard?.instantiateViewController(withIdentifier: "DetailsViewController") as? DetailsViewController else { return }
+        
+        detailsViewController.placeDetails = placeDetails
         
         DispatchQueue.main.async {
-            self.navigationController?.pushViewController(DetailsViewController, animated: true)
+            print("NavigationController")
+            self.navigationController?.pushViewController(detailsViewController, animated: true)
         }
     }
     

@@ -7,12 +7,15 @@
 //
 
 import Foundation
+import CoreLocation
 
 class PlaceDetails: NSObject, NSCoding {
     struct PropertyKey {
         static let idKey = "id"
         static let nameKey = "name"
         static let vicinityKey = "vicinity"
+        static let longtitude = "longtitude"
+        static let latitudeKey = "latitude"
         static let formattedAddressKey = "formattedAddress"
         static let ratingKey = "rating"
         static let iconKey = "icon"
@@ -23,6 +26,7 @@ class PlaceDetails: NSObject, NSCoding {
     var id: String
     var name: String?
     var vicinity: String?
+    var coordinate: CLLocationCoordinate2D?
     var formattedAddress: String?
     var rating: Double?
     var icon: String?
@@ -81,5 +85,16 @@ class PlaceDetails: NSObject, NSCoding {
         self.placeid = json["place_id"] as? String
         self.formatterPhoneNumber = json["formatted_phone_number"] as? String
         self.websiteLabel = json["website"] as? String
+        
+        if let geometry = json["geometry"] as? [String:Any]{
+            if let location = geometry["locaion"] as? [String: Any]{
+                if let latitude = location["lat"] as?
+                Double,
+                let longitude = location["lng"] as?
+                    Double{
+                    self.coordinate = CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
+                }
+            }
+        }
     }
 }
